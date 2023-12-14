@@ -3,6 +3,7 @@ package spawner
 import (
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/block/model"
+	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/go-gl/mathgl/mgl64"
 	"math/rand"
@@ -62,6 +63,16 @@ func (s *Spawner) tick() {
 }
 
 func (s *Spawner) spawn() {
+	p1, p2 := s.pos.Add(mgl64.Vec3{-8, -8, -8}), s.pos.Add(mgl64.Vec3{8, 8, 8})
+	x0, y0, z0, x1, y1, z1 := p1.X(), p1.Y(), p1.Z(), p2.X(), p2.Y(), p2.Z()
+
+	if len(s.w.EntitiesWithin(cube.Box(x0, y0, z0, x1, y1, z1), func(entity world.Entity) bool {
+		_, ok := entity.(*player.Player)
+		return !ok
+	})) <= 0 {
+		return
+	}
+
 	b := s.w.Block(cube.PosFromVec3(s.pos))
 	if b != s {
 		s.c <- struct{}{}
