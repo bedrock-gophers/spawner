@@ -40,7 +40,7 @@ func main() {
 
 func accept(p *player.Player) {
 	pos := cube.PosFromVec3(p.Position().Sub(mgl64.Vec3{0, 1, 0}))
-	s := spawner.New(newEnderman, pos.Vec3Centre(), p.World(), time.Second/2)
+	s := spawner.New(newEnderman, pos.Vec3Centre(), p.World(), time.Second/2, 10)
 	world.RegisterBlock(s)
 	p.World().SetBlock(pos, s, nil)
 }

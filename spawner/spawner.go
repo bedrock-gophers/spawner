@@ -16,17 +16,21 @@ type Spawner struct {
 	pos mgl64.Vec3
 	w   *world.World
 
+	maxEntities int
+
 	rate time.Duration
 	c    chan struct{}
 }
 
 // New returns a new spawner for the entity passed.
-func New(e func(mgl64.Vec3, *world.World) world.Entity, pos mgl64.Vec3, w *world.World, rate time.Duration) *Spawner {
+func New(e func(mgl64.Vec3, *world.World) world.Entity, pos mgl64.Vec3, w *world.World, rate time.Duration, maxEntities int) *Spawner {
 	s := &Spawner{
-		e:    e,
-		pos:  pos,
-		w:    w,
-		rate: rate,
+		e:   e,
+		pos: pos,
+		w:   w,
+
+		maxEntities: maxEntities,
+		rate:        rate,
 	}
 	go s.tick()
 	return s
@@ -63,7 +67,7 @@ func (s *Spawner) tick() {
 }
 
 func (s *Spawner) spawn() {
-	p1, p2 := s.pos.Add(mgl64.Vec3{-8, -8, -8}), s.pos.Add(mgl64.Vec3{8, 8, 8})
+	p1, p2 := s.pos.Add(mgl64.Vec3{-16, -16, -16}), s.pos.Add(mgl64.Vec3{16, 16, 16})
 	x0, y0, z0, x1, y1, z1 := p1.X(), p1.Y(), p1.Z(), p2.X(), p2.Y(), p2.Z()
 
 	if len(s.w.EntitiesWithin(cube.Box(x0, y0, z0, x1, y1, z1), func(entity world.Entity) bool {
@@ -88,6 +92,12 @@ func (s *Spawner) spawn() {
 	}
 
 	e := s.e(pos, s.w)
+
+	if len(s.w.EntitiesWithin(cube.Box(x0, y0, z0, x1, y1, z1), func(entity world.Entity) bool {
+		return entity.Type() != e.Type()
+	})) >= s.maxEntities {
+		return
+	}
 
 	s.w.AddEntity(e)
 }
