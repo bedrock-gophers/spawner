@@ -4,6 +4,8 @@ github.com/bedrock-gophers/living v0.0.0-20231216143643-69a388aff28f h1:lf6J0ba9
 github.com/bedrock-gophers/living v0.0.0-20231216143643-69a388aff28f/go.mod h1:eXglke5UVj+tDxgZKGDKGxHtJ0pH/IFAqtk3UzQuEJA=
 github.com/bedrock-gophers/living v0.0.0-20231216150402-cc418a12513b h1:blQOfKUobCS71CIFdu1B1r60I4NRefkeDzayloqhQVU=
 github.com/bedrock-gophers/living v0.0.0-20231216150402-cc418a12513b/go.mod h1:eXglke5UVj+tDxgZKGDKGxHtJ0pH/IFAqtk3UzQuEJA=
+github.com/bedrock-gophers/living v0.0.0-20231216224824-0e1599282e89 h1:eWia6ipTsn6XOfKyEiaWRCcg/qOUVpd1EPPND7YlBrE=
+github.com/bedrock-gophers/living v0.0.0-20231216224824-0e1599282e89/go.mod h1:eXglke5UVj+tDxgZKGDKGxHtJ0pH/IFAqtk3UzQuEJA=
 github.com/brentp/intintmap v0.0.0-20190211203843-30dc0ade9af9 h1:/G0ghZwrhou0Wq21qc1vXXMm/t/aKWkALWwITptKbE0=
 github.com/brentp/intintmap v0.0.0-20190211203843-30dc0ade9af9/go.mod h1:TOk10ahXejq9wkEaym3KPRNeuR/h5Jx+s8QRWIa2oTM=
 github.com/cespare/xxhash/v2 v2.2.0 h1:DC2CZ1Ep5Y4k3ZQ899DldepgrayRUGE6BBZ/cd9Cj44=

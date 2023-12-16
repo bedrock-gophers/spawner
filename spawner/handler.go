@@ -31,6 +31,7 @@ func (h *handler) HandleHurt(ctx *event.Context, damage float64, src world.Damag
 		h.e.Heal(h.e.MaxHealth(), effect.InstantHealingSource{})
 		h.stack--
 		h.e.SetNameTag(text.Colourf("<yellow>%dx</yellow>", h.stack))
+		h.e.TriggerLastAttack()
 
 		for _, drop := range h.e.Drops() {
 			w.AddEntity(entity.NewItem(drop, pos))
