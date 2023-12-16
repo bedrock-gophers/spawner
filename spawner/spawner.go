@@ -1,35 +1,38 @@
 package spawner
 
 import (
+	"github.com/bedrock-gophers/living/living"
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/block/model"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/go-gl/mathgl/mgl64"
+	"github.com/sandertv/gophertunnel/minecraft/text"
 	"math/rand"
 	"time"
 )
 
 // Spawner represents a spawner block that spawns entities at a certain rate.
 type Spawner struct {
-	e   func(mgl64.Vec3, *world.World) world.Entity
+	e   func(mgl64.Vec3, *world.World) *living.Living
 	pos mgl64.Vec3
 	w   *world.World
 
 	maxEntities int
+	stacked     bool
 
 	rate time.Duration
 	c    chan struct{}
 }
 
 // New returns a new spawner for the entity passed.
-func New(e func(mgl64.Vec3, *world.World) world.Entity, pos mgl64.Vec3, w *world.World, rate time.Duration, maxEntities int) *Spawner {
+func New(e func(mgl64.Vec3, *world.World) *living.Living, pos mgl64.Vec3, w *world.World, rate time.Duration, maxEntities int, stacked bool) *Spawner {
 	s := &Spawner{
-		e:   e,
-		pos: pos,
-		w:   w,
-
+		e:           e,
+		pos:         pos,
+		w:           w,
 		maxEntities: maxEntities,
+		stacked:     stacked,
 		rate:        rate,
 	}
 	go s.tick()
@@ -93,11 +96,30 @@ func (s *Spawner) spawn() {
 
 	e := s.e(pos, s.w)
 
-	if len(s.w.EntitiesWithin(cube.Box(x0, y0, z0, x1, y1, z1), func(entity world.Entity) bool {
+	ents := s.w.EntitiesWithin(cube.Box(x0, y0, z0, x1, y1, z1), func(entity world.Entity) bool {
 		return entity.Type() != e.Type()
-	})) >= s.maxEntities {
+	})
+
+	if s.stacked {
+		if len(ents) == 0 {
+			e.Handle(&handler{s: s, stack: 1, e: e})
+			e.SetNameTag(text.Colourf("<yellow>%dx</yellow>", 1))
+			s.w.AddEntity(e)
+			return
+		}
+
+		h := ents[0].(*living.Living).Handler().(*handler)
+		if h.stack < s.maxEntities && h.stack >= 1 {
+			h.stack++
+			h.e.SetNameTag(text.Colourf("<yellow>%dx</yellow>", h.stack))
+		}
 		return
 	}
 
+	if len(ents) >= s.maxEntities {
+		return
+	}
+
+	e.Handle(&handler{s: s, stack: 1, e: e})
 	s.w.AddEntity(e)
 }

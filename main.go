@@ -40,12 +40,12 @@ func main() {
 
 func accept(p *player.Player) {
 	pos := cube.PosFromVec3(p.Position().Sub(mgl64.Vec3{0, 1, 0}))
-	s := spawner.New(newEnderman, pos.Vec3Centre(), p.World(), time.Second/2, 10)
+	s := spawner.New(newEnderman, pos.Vec3Centre(), p.World(), time.Second, 64, true)
 	world.RegisterBlock(s)
 	p.World().SetBlock(pos, s, nil)
 }
 
-func newEnderman(pos mgl64.Vec3, w *world.World) world.Entity {
+func newEnderman(pos mgl64.Vec3, w *world.World) *living.Living {
 	return living.NewLivingEntity(entityTypeEnderman{}, 40, 0.3, []item.Stack{item.NewStack(item.EnderPearl{}, rand.Intn(2)+1)}, &entity.MovementComputer{
 		Gravity:           0.08,
 		Drag:              0.02,

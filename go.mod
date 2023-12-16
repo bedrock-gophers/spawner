@@ -3,7 +3,7 @@ module github.com/bedrock-gophers/spawner
 go 1.21.4
 
 require (
-	github.com/bedrock-gophers/living v0.0.0-20231214203635-7c5b5b34cd5e // indirect
+	github.com/bedrock-gophers/living v0.0.0-20231216150402-cc418a12513b // indirect
 	github.com/brentp/intintmap v0.0.0-20190211203843-30dc0ade9af9 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/df-mc/atomic v1.10.0 // indirect
