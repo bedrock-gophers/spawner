@@ -12,6 +12,10 @@ import (
 	"time"
 )
 
+func init() {
+	world.RegisterBlock(&Spawner{})
+}
+
 // Spawner represents a spawner block that spawns entities at a certain rate.
 type Spawner struct {
 	e   func(mgl64.Vec3, *world.World) *living.Living
