@@ -81,7 +81,7 @@ func (s *Spawner) spawn() {
 	}
 
 	b := s.w.Block(cube.PosFromVec3(s.pos))
-	if b != s {
+	if _, ok := b.(*Spawner); !ok {
 		s.c <- struct{}{}
 		return
 	}
