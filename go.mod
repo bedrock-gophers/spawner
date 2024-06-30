@@ -1,4 +1,4 @@
-module github.com/moyai-network/vanilla
+module github.com/bedrock-gophers/spawner
 
 go 1.22.2
 

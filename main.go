@@ -1,14 +1,14 @@
 package main
 
 import (
+	"github.com/bedrock-gophers/spawner/spawner"
+	_ "github.com/bedrock-gophers/spawner/spawner"
 	"github.com/df-mc/dragonfly/server"
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/player/chat"
 	"github.com/df-mc/dragonfly/server/player/skin"
 	"github.com/df-mc/dragonfly/server/world"
-	"github.com/moyai-network/vanilla/spawner"
-	_ "github.com/moyai-network/vanilla/spawner"
 	"github.com/sirupsen/logrus"
 )
 
