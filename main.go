@@ -64,4 +64,7 @@ func init() {
 
 func accept(p *player.Player) {
 	p.Inventory().AddItem(item.NewStack(spawner.SpawnEgg{Kind: entityTypeEnderman{}}, 1))
+	p.Inventory().AddItem(item.NewStack(spawner.Spawner{}, 1))
+	p.Inventory().AddItem(item.NewStack(item.Pickaxe{Tier: item.ToolTierGold}, 1))
+	p.SetGameMode(world.GameModeSurvival)
 }

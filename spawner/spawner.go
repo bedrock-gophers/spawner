@@ -1,6 +1,7 @@
 package spawner
 
 import (
+	"github.com/df-mc/dragonfly/server/block"
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/block/model"
 	"github.com/df-mc/dragonfly/server/item"
@@ -24,6 +25,12 @@ type Spawner struct {
 	pos cube.Pos
 }
 
+// BreakInfo ...
+func (s Spawner) BreakInfo() block.BreakInfo {
+	return newBreakInfo(5, func(t item.Tool) bool { return false }, func(t item.Tool) bool { return t.ToolType() == item.TypePickaxe }, func(t item.Tool, enchantments []item.Enchantment) []item.Stack { return []item.Stack{} })
+}
+
+// Activate ...
 func (s Spawner) Activate(pos cube.Pos, clickedFace cube.Face, w *world.World, u item.User, ctx *item.UseContext) bool {
 	if s.EntityType != nil {
 		return false
@@ -39,6 +46,7 @@ func (s Spawner) Activate(pos cube.Pos, clickedFace cube.Face, w *world.World, u
 	return true
 }
 
+// DecodeNBT ...
 func (s Spawner) DecodeNBT(data map[string]any) any {
 	s.Delay = int(data["Delay"].(int16))
 	s.Movable = data["isMovable"].(byte) == 1
@@ -55,6 +63,7 @@ func (s Spawner) DecodeNBT(data map[string]any) any {
 	return s
 }
 
+// EncodeNBT ...
 func (s Spawner) EncodeNBT() map[string]any {
 	var entityID string
 	if s.EntityType != nil {
@@ -86,6 +95,7 @@ func boolToByte(b bool) byte {
 	return 0
 }
 
+// Tick ...
 func (s Spawner) Tick(_ int64, pos cube.Pos, w *world.World) {
 	if s.EntityType == nil {
 		return
@@ -137,14 +147,17 @@ func (s Spawner) Tick(_ int64, pos cube.Pos, w *world.World) {
 	w.SetBlock(pos, s, nil)
 }
 
+// EncodeItem ...
 func (s Spawner) EncodeItem() (name string, meta int16) {
 	return "minecraft:mob_spawner", 0
 }
 
+// EncodeBlock ...
 func (s Spawner) EncodeBlock() (string, map[string]any) {
 	return "minecraft:mob_spawner", nil
 }
 
+// Model ...
 func (s Spawner) Model() world.BlockModel {
 	return model.Solid{}
 }
