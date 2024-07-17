@@ -1,6 +1,8 @@
 package spawner
 
 import (
+	"math/rand"
+
 	"github.com/df-mc/dragonfly/server/block"
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/block/model"
@@ -8,7 +10,6 @@ import (
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/go-gl/mathgl/mgl64"
-	"math/rand"
 )
 
 type Spawner struct {
@@ -49,7 +50,7 @@ func (s Spawner) Activate(pos cube.Pos, clickedFace cube.Face, w *world.World, u
 // DecodeNBT ...
 func (s Spawner) DecodeNBT(data map[string]any) any {
 	s.Delay = int(data["Delay"].(int16))
-	s.Movable = data["isMovable"].(byte) == 1
+	s.Movable = true
 	s.RequiredPlayerRange = int(data["RequiredPlayerRange"].(int16))
 	s.MaxNearbyEntities = int(data["MaxNearbyEntities"].(int16))
 	s.MaxSpawnDelay = int(data["MaxSpawnDelay"].(int16))
