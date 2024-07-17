@@ -3,6 +3,7 @@ package spawner
 import (
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/block/model"
+	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/go-gl/mathgl/mgl64"
@@ -21,6 +22,21 @@ type Spawner struct {
 	SpawnRange          int
 
 	pos cube.Pos
+}
+
+func (s Spawner) Activate(pos cube.Pos, clickedFace cube.Face, w *world.World, u item.User, ctx *item.UseContext) bool {
+	if s.EntityType != nil {
+		return false
+	}
+	held, _ := u.HeldItems()
+	egg, ok := held.Item().(SpawnEgg)
+	if held.Empty() || !ok {
+		return false
+	}
+	s.EntityType = egg.Kind
+	w.SetBlock(pos, s, nil)
+	ctx.SubtractFromCount(1)
+	return true
 }
 
 func (s Spawner) DecodeNBT(data map[string]any) any {
@@ -71,6 +87,9 @@ func boolToByte(b bool) byte {
 }
 
 func (s Spawner) Tick(_ int64, pos cube.Pos, w *world.World) {
+	if s.EntityType == nil {
+		return
+	}
 	s.pos = pos
 	s.Delay--
 
@@ -106,7 +125,12 @@ func (s Spawner) Tick(_ int64, pos cube.Pos, w *world.World) {
 		} else {
 			spawnPos = blockPos.Sub(mgl64.Vec3{-rand.Float64() * -1.5, -1, -rand.Float64() * -1.5})
 		}
-		w.AddEntity(newEntities[s.EntityType.EncodeEntity()](cube.PosFromVec3(spawnPos)))
+
+		newEnt, ok := newEntities[s.EntityType.EncodeEntity()]
+		if !ok {
+			return
+		}
+		w.AddEntity(newEnt(cube.PosFromVec3(spawnPos), w))
 	}
 
 	s.Delay = rand.Intn(s.MaxSpawnDelay-s.MinSpawnDelay) + s.MinSpawnDelay

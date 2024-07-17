@@ -8,13 +8,16 @@ import (
 )
 
 var (
-	newEntities = map[string]func(cube.Pos) world.Entity{}
+	newEntities = map[string]func(cube.Pos, *world.World) world.Entity{}
 	entities    = map[string]world.EntityType{}
 )
 
-func RegisterEntityType(kind world.EntityType, newEnt func(cube.Pos) world.Entity) {
+func RegisterEntityType(kind world.EntityType, newEnt func(cube.Pos, *world.World) world.Entity) {
 	newEntities[kind.EncodeEntity()] = newEnt
 	entities[kind.EncodeEntity()] = kind
+
+	world.RegisterItem(SpawnEgg{Kind: kind})
+	creative.RegisterItem(item.NewStack(SpawnEgg{Kind: kind}, 1))
 }
 
 func init() {
