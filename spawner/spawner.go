@@ -49,19 +49,31 @@ func (s Spawner) Activate(pos cube.Pos, clickedFace cube.Face, w *world.World, u
 
 // DecodeNBT ...
 func (s Spawner) DecodeNBT(data map[string]any) any {
-	s.Delay = int(data["Delay"].(int16))
+	s.Delay = int(castOr[int16](data["Delay"], 0))
 	s.Movable = true
-	s.RequiredPlayerRange = int(data["RequiredPlayerRange"].(int16))
-	s.MaxNearbyEntities = int(data["MaxNearbyEntities"].(int16))
-	s.MaxSpawnDelay = int(data["MaxSpawnDelay"].(int16))
-	s.MinSpawnDelay = int(data["MinSpawnDelay"].(int16))
-	s.SpawnCount = int(data["SpawnCount"].(int16))
-	s.SpawnRange = int(data["SpawnRange"].(int16))
+	s.RequiredPlayerRange = int(castOr[int16](data["RequiredPlayerRange"], 0))
+	s.MaxNearbyEntities = int(castOr[int16](data["MaxNearbyEntities"], 0))
+	s.MaxSpawnDelay = int(castOr[int16](data["MaxSpawnDelay"], 0))
+	s.MinSpawnDelay = int(castOr[int16](data["MinSpawnDelay"], 0))
+	s.SpawnCount = int(castOr[int16](data["SpawnCount"], 0))
+	s.SpawnRange = int(castOr[int16](data["SpawnRange"], 0))
 
-	if id := data["EntityIdentifier"].(string); id != "" {
+	if id := castOr[string](data["EntityIdentifier"], ""); id != "" {
 		s.EntityType = entities[id]
 	}
 	return s
+}
+
+func castOr[T any](v any, or T) T {
+	if v == nil {
+		return or
+	}
+	switch v.(type) {
+	case T:
+		return v.(T)
+	default:
+		return or
+	}
 }
 
 // EncodeNBT ...
