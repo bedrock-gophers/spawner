@@ -50,7 +50,7 @@ func (s Spawner) Activate(pos cube.Pos, clickedFace cube.Face, w *world.World, u
 // DecodeNBT ...
 func (s Spawner) DecodeNBT(data map[string]any) any {
 	s.Delay = int(castOr[int16](data["Delay"], 0))
-	s.Movable = true
+	s.Movable = castOr[byte](data["isMovable"], 0) == 1
 	s.RequiredPlayerRange = int(castOr[int16](data["RequiredPlayerRange"], 0))
 	s.MaxNearbyEntities = int(castOr[int16](data["MaxNearbyEntities"], 0))
 	s.MaxSpawnDelay = int(castOr[int16](data["MaxSpawnDelay"], 0))
