@@ -7,6 +7,6 @@ var (
 	hashSpawner = hashStart + 1
 )
 
-func (s Spawner) Hash() uint64 {
-	return hashSpawner
+func (s Spawner) Hash() (uint64, uint64) {
+	return hashSpawner, 0
 }
