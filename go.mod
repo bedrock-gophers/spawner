@@ -1,15 +1,17 @@
 module github.com/bedrock-gophers/spawner
 
-go 1.22.2
+go 1.23
+
+toolchain go1.23.4
 
 require (
-	github.com/df-mc/dragonfly v0.9.19-0.20241117064658-9dde24c7f7b0
+	github.com/df-mc/dragonfly v0.9.20-0.20241223191437-0c82bfe639c0
 	github.com/go-gl/mathgl v1.1.0
 	github.com/sirupsen/logrus v1.9.3
 )
 
 require (
-	github.com/bedrock-gophers/living v0.1.1-0.20240717064318-ec79bc064db4 // indirect
+	github.com/bedrock-gophers/living v0.1.3 // indirect
 	github.com/brentp/intintmap v0.0.0-20190211203843-30dc0ade9af9 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/df-mc/atomic v1.10.0 // indirect
@@ -24,7 +26,7 @@ require (
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/sandertv/go-raknet v1.14.2 // indirect
-	github.com/sandertv/gophertunnel v1.42.2 // indirect
+	github.com/sandertv/gophertunnel v1.43.0 // indirect
 	github.com/segmentio/fasthash v1.0.3 // indirect
 	golang.org/x/crypto v0.28.0 // indirect
 	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c // indirect

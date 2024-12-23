@@ -8,11 +8,11 @@ import (
 )
 
 var (
-	newEntities = map[string]func(cube.Pos, *world.World) world.Entity{}
+	newEntities = map[string]func(cube.Pos, *world.Tx) *world.EntityHandle{}
 	entities    = map[string]world.EntityType{}
 )
 
-func RegisterEntityType(kind world.EntityType, newEnt func(cube.Pos, *world.World) world.Entity) {
+func RegisterEntityType(kind world.EntityType, newEnt func(cube.Pos, *world.Tx) *world.EntityHandle) {
 	newEntities[kind.EncodeEntity()] = newEnt
 	entities[kind.EncodeEntity()] = kind
 

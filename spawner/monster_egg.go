@@ -12,14 +12,14 @@ type SpawnEgg struct {
 	Kind world.EntityType
 }
 
-func (m SpawnEgg) UseOnBlock(pos cube.Pos, face cube.Face, clickPos mgl64.Vec3, w *world.World, user item.User, ctx *item.UseContext) bool {
-	_, ok := w.Block(pos).(Spawner)
+func (m SpawnEgg) UseOnBlock(pos cube.Pos, face cube.Face, _ mgl64.Vec3, tx *world.Tx, user item.User, ctx *item.UseContext) bool {
+	_, ok := tx.Block(pos).(Spawner)
 	if ok {
 		return false
 	}
-	ent := newEntities[m.Kind.EncodeEntity()](pos.Add(cube.Pos{0, 1, 0}), w)
+	ent := newEntities[m.Kind.EncodeEntity()](pos.Add(cube.Pos{0, 1, 0}), tx)
 	ctx.SubtractFromCount(1)
-	w.AddEntity(ent)
+	tx.AddEntity(ent)
 
 	return true
 }

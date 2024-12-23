@@ -32,7 +32,7 @@ func (s Spawner) BreakInfo() block.BreakInfo {
 }
 
 // Activate ...
-func (s Spawner) Activate(pos cube.Pos, clickedFace cube.Face, w *world.World, u item.User, ctx *item.UseContext) bool {
+func (s Spawner) Activate(pos cube.Pos, clickedFace cube.Face, tx *world.Tx, u item.User, ctx *item.UseContext) bool {
 	if s.EntityType != nil {
 		return false
 	}
@@ -42,7 +42,7 @@ func (s Spawner) Activate(pos cube.Pos, clickedFace cube.Face, w *world.World, u
 		return false
 	}
 	s.EntityType = egg.Kind
-	w.SetBlock(pos, s, nil)
+	tx.SetBlock(pos, s, nil)
 	ctx.SubtractFromCount(1)
 	return true
 }
@@ -109,7 +109,7 @@ func boolToByte(b bool) byte {
 }
 
 // Tick ...
-func (s Spawner) Tick(_ int64, pos cube.Pos, w *world.World) {
+func (s Spawner) Tick(_ int64, pos cube.Pos, tx *world.Tx) {
 	if s.EntityType == nil {
 		return
 	}
@@ -117,7 +117,7 @@ func (s Spawner) Tick(_ int64, pos cube.Pos, w *world.World) {
 	s.Delay--
 
 	if s.Delay > 0 {
-		w.SetBlock(pos, s, nil)
+		tx.SetBlock(pos, s, nil)
 		return
 	}
 
@@ -125,18 +125,26 @@ func (s Spawner) Tick(_ int64, pos cube.Pos, w *world.World) {
 	p1, p2 := s.pos.Add(cube.Pos{-minRange, -minRange, -minRange}), s.pos.Add(cube.Pos{minRange, minRange, minRange})
 	x0, y0, z0, x1, y1, z1 := float64(p1.X()), float64(p1.Y()), float64(p1.Z()), float64(p2.X()), float64(p2.Y()), float64(p2.Z())
 
-	if len(w.EntitiesWithin(cube.Box(x0, y0, z0, x1, y1, z1), func(entity world.Entity) bool {
-		_, ok := entity.(*player.Player)
-		return !ok
-	})) <= 0 {
+	var playerCount int
+	for e := range tx.EntitiesWithin(cube.Box(x0, y0, z0, x1, y1, z1)) {
+		if e.H().Type() == player.Type {
+			playerCount++
+		}
+	}
+	if playerCount <= 0 {
 		return
 	}
 
-	if len(w.EntitiesWithin(cube.Box(x0, y0, z0, x1, y1, z1), func(entity world.Entity) bool {
-		return entity.Type() != s.EntityType
-	})) >= s.MaxNearbyEntities {
+	var nearbyEntityCount int
+	for e := range tx.EntitiesWithin(cube.Box(x0, y0, z0, x1, y1, z1)) {
+		if e.H().Type() == s.EntityType {
+			nearbyEntityCount++
+		}
+	}
+	if nearbyEntityCount <= 0 {
 		return
 	}
+
 	s.SpawnCount = rand.Intn(4)
 	blockPos := pos.Vec3()
 
@@ -153,11 +161,11 @@ func (s Spawner) Tick(_ int64, pos cube.Pos, w *world.World) {
 		if !ok {
 			return
 		}
-		w.AddEntity(newEnt(cube.PosFromVec3(spawnPos), w))
+		tx.AddEntity(newEnt(cube.PosFromVec3(spawnPos), tx))
 	}
 
 	s.Delay = rand.Intn(s.MaxSpawnDelay-s.MinSpawnDelay) + s.MinSpawnDelay
-	w.SetBlock(pos, s, nil)
+	tx.SetBlock(pos, s, nil)
 }
 
 // EncodeItem ...

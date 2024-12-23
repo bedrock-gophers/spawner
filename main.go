@@ -6,14 +6,11 @@ import (
 	_ "github.com/bedrock-gophers/spawner/spawner"
 	"github.com/df-mc/dragonfly/server"
 	"github.com/df-mc/dragonfly/server/block/cube"
-	"github.com/df-mc/dragonfly/server/entity"
 	"github.com/df-mc/dragonfly/server/item"
-	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/player/chat"
 	"github.com/df-mc/dragonfly/server/world"
 	"log"
 	"log/slog"
-	"math/rand"
 )
 
 func main() {
@@ -29,13 +26,18 @@ func main() {
 
 	srv.Listen()
 
-	for srv.Accept(accept) {
-
+	for p := range srv.Accept() {
+		p.Inventory().AddItem(item.NewStack(spawner.SpawnEgg{Kind: entityTypeEnderman{}}, 1))
+		p.Inventory().AddItem(item.NewStack(spawner.Spawner{}, 1))
+		p.Inventory().AddItem(item.NewStack(item.Pickaxe{Tier: item.ToolTierGold}, 1))
+		p.SetGameMode(world.GameModeSurvival)
 	}
 }
 
 // Define a custom entity type for Enderman.
-type entityTypeEnderman struct{}
+type entityTypeEnderman struct {
+	living.NopLivingType
+}
 
 // EncodeEntity ...
 func (entityTypeEnderman) EncodeEntity() string {
@@ -48,20 +50,17 @@ func (entityTypeEnderman) BBox(world.Entity) cube.BBox {
 }
 
 func init() {
-	spawner.RegisterEntityType(entityTypeEnderman{}, func(pos cube.Pos, w *world.World) world.Entity {
-		enderman := living.NewLivingEntity(entityTypeEnderman{}, 40, 0.3, []item.Stack{item.NewStack(item.EnderPearl{}, rand.Intn(2)+1)}, &entity.MovementComputer{
-			Gravity:           0.08,
-			Drag:              0.02,
-			DragBeforeGravity: true,
-		}, pos.Vec3(), w)
+	spawner.RegisterEntityType(entityTypeEnderman{}, func(pos cube.Pos, tx *world.Tx) *world.EntityHandle {
+		opts := world.EntitySpawnOpts{
+			Position: pos.Vec3(),
+		}
 
-		return enderman
+		conf := living.Config{
+			EntityType: entityTypeEnderman{},
+			Drops: []living.Drop{
+				living.NewDrop(item.EnderPearl{}, 0, 2),
+			},
+		}
+		return opts.New(conf.EntityType, conf)
 	})
-}
-
-func accept(p *player.Player) {
-	p.Inventory().AddItem(item.NewStack(spawner.SpawnEgg{Kind: entityTypeEnderman{}}, 1))
-	p.Inventory().AddItem(item.NewStack(spawner.Spawner{}, 1))
-	p.Inventory().AddItem(item.NewStack(item.Pickaxe{Tier: item.ToolTierGold}, 1))
-	p.SetGameMode(world.GameModeSurvival)
 }
